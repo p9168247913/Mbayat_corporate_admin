@@ -11,6 +11,12 @@ if (process.env.NODE_ENV === "development") {
   } else url = process.env.PUBLIC_URL; /// ADD YOUR CPANEL SUB-URL
 }
 
+
+
+
+
+
+
 //Function to validate and return errors for a form
 export const checkForm = (formData) => {
   let errorState = {};
