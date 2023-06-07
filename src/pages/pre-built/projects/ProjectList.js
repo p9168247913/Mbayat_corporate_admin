@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "../../../layout/head/Head";
 import Content from "../../../layout/content/Content";
 import DatePicker from "react-datepicker";
+import { saveAs } from 'file-saver'; // Library for downloading files
+import * as XLSX from 'xlsx';
+
 import {
   DropdownMenu,
   DropdownToggle,
@@ -12,7 +15,8 @@ import {
   Modal,
   DropdownItem,
   Form,
-  Badge
+  Badge,
+  Table
 } from "reactstrap";
 import {
   Block,
@@ -36,13 +40,16 @@ import { projectData, teamList } from "./ProjectData";
 import { findUpper, setDeadline, setDeadlineDays, calcPercentage } from "../../../utils/Utils";
 import { useForm } from "react-hook-form";
 
+
+
+
 export const ProjectListPage = () => {
   const [sm, updateSm] = useState(false);
   const [modal, setModal] = useState({
     edit: false,
     add: false,
   });
-  const [editId, setEditedId] = useState();
+  const [downloadModal, setdownloadModal] = useState();
   const [data, setData] = useState(projectData);
   const [formData, setFormData] = useState({
     // title: "",
@@ -57,6 +64,34 @@ export const ProjectListPage = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage] = useState(7);
+
+
+  const [subscriptionData, setsubscriptionData] = useState([])
+
+  const [itemList, setItemList] = useState([])
+  const [subscriptionPlan1, setSubscriptionPlan] = useState('')
+
+  // console.log("itemList", itemList)
+
+  // console.log("subscriptionsPlan", subscriptionData);
+
+
+  const fetchSubscriptionData = async () => {
+    try {
+      const response = await fetch('http://localhost:5500/subscriptions');
+      if (response) {
+        const jsonData = await response.json();
+        setsubscriptionData(jsonData);
+      } else {
+        console.error('Error:', response.status);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  useEffect(() => {
+    fetchSubscriptionData();
+  }, []);
 
   // OnChange function to get the input data
   const onInputChange = (e) => {
@@ -196,17 +231,161 @@ export const ProjectListPage = () => {
   // Get current list, pagination
   const indexOfLastItem = currentPage * itemPerPage;
   const indexOfFirstItem = indexOfLastItem - itemPerPage;
-  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = subscriptionData.slice(indexOfFirstItem, indexOfLastItem);
 
   // Change Page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const { errors, register, handleSubmit } = useForm();
 
+
+
+  const handleCloseModal = () => {
+    setModal({ edit: false });
+    setItemList([])
+    setSubscriptionPlan('')
+  };
+
+
+  const handleViewPromoCodes = (promoCodes, plan) => {
+    setSubscriptionPlan(plan)
+    setItemList(promoCodes);
+    setModal({ edit: true });
+  };
+
+
+
+  const handleDownload = () => {
+    const headers = ['Promo Codes', "Plan"]; // Add more headers as per your item data
+    const data = [headers, ...itemList.map((item) => [item, subscriptionPlan1])];
+
+    const sheetName = 'Item List';
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    const fileData = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(fileData, 'Promocodes.xlsx');
+  };
+
+  //Post Subscriptions
+
+  const [subscriptionPlan, setPostSubscriptionPlan] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [subscriptionDate, setSubscriptionDate] = useState('');
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  useEffect(() => {
+    const currentDate = new Date().toISOString().slice(0, 10);
+    setSubscriptionDate(currentDate);
+    fetchSubscriptionData();
+  }, []);
+
+
+  const handleSubscriptionPlanPriceChange = (event) => {
+    const selectedPlan = event.target.value;
+    setPostSubscriptionPlan(selectedPlan);
+
+    // Calculate total amount based on selected plan and quantity
+    const price = calculatePrice(selectedPlan);
+    const calculatedTotalAmount = price * quantity;
+    setTotalAmount(calculatedTotalAmount);
+  };
+
+  const handleQuantityPriceChange = (event) => {
+    const selectedQuantity = event.target.value;
+    setQuantity(selectedQuantity);
+
+    // Calculate total amount based on selected plan and quantity
+    const price = calculatePrice(subscriptionPlan);
+    const calculatedTotalAmount = price * selectedQuantity;
+    setTotalAmount(calculatedTotalAmount);
+  };
+
+
+  const calculatePrice = (selectedPlan) => {
+    switch (selectedPlan) {
+      case '1 month':
+        return 15;
+      case '2 months':
+        return 30;
+      case '3 months':
+        return 45;
+      default:
+        return 0;
+    }
+  };
+
+
+  const handleSubscriptionPlanChange = (e) => {
+    setSubscriptionPlan(e.target.value);
+  };
+
+  const handleQuantityChange = (e) => {
+    setQuantity(parseInt(e.target.value));
+  };
+
+  const handlePurchase = async () => {
+
+    try {
+
+      const response = await fetch('http://localhost:5500/subscriptions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          subscriptionPlan,
+          quantity,
+          subscriptionDate,
+          totalAmount,
+        }),
+      });
+
+      if (response.status) {
+        console.log(response.body)
+        fetchSubscriptionData();
+        // Handle successful response, e.g., show a success message
+        showAlert('Success', 'Subscription purchased successfully!', 'success');
+      } else {
+        console.error('Error:', response.status);
+        // Handle error response, e.g., show an error message
+        showAlert('Error', 'Failed to purchase subscription. Please try again.', 'danger');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle network or other errors
+      showAlert('Error', 'An error occurred. Please try again later.', 'danger');
+    }
+  };
+
+  const showAlert = (title, message, type) => {
+    const alertContainer = document.getElementById('alertContainer');
+    const alertHTML = `
+      <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+        <strong>${title}</strong> ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    `;
+    alertContainer.innerHTML = alertHTML;
+
+    setTimeout(() => {
+      const alertElement = alertContainer.querySelector('.alert');
+      alertElement.remove();
+    }, 3000);
+  };
+
   return (
     <React.Fragment>
       <Head title="Project List"></Head>
       <Content>
+        <div id="alertContainer" style={{ marginTop: "-10px", marginBottom: "10px" }}></div>
+
         <BlockHead size="sm">
           <BlockBetween>
             <BlockHeadContent>
@@ -284,17 +463,6 @@ export const ProjectListPage = () => {
         <Block>
           <div className="nk-tb-list is-separate nk-tb-ulist">
             <DataTableHead className="nk-tb-item nk-tb-head">
-              {/* <DataTableRow className="nk-tb-col-check">
-                <div className="custom-control custom-control-sm custom-checkbox notext">
-                  <input
-                    type="checkbox"
-                    className="custom-control-input"
-                    id="pid-all"
-                    onChange={(e) => selectorCheck(e)}
-                  />
-                  <label className="custom-control-label" htmlFor="pid-all"></label>
-                </div>
-              </DataTableRow> */}
               <DataTableRow>
                 <span className="sub-text" style={{ fontWeight: "bold" }}>Plans</span>
               </DataTableRow>
@@ -307,69 +475,15 @@ export const ProjectListPage = () => {
               <DataTableRow size="xxl">
                 <span className="sub-text" style={{ fontWeight: "bold" }} >Status</span>
               </DataTableRow>
-              {/* <DataTableRow size="md">
-                <span className="sub-text">Progress</span>
-              </DataTableRow> */}
-              <DataTableRow size="mb">
-                <span className="sub-text" style={{ fontWeight: "bold" }}>Status</span>
-              </DataTableRow>
               <DataTableRow size="md">
                 <span className="sub-text" style={{ fontWeight: "bold" }}>Action</span>
-              </DataTableRow>
-              {/* <DataTableRow className="nk-tb-col-tools text-end">
-                <UncontrolledDropdown>
-                  <DropdownToggle tag="a" className="btn btn-xs btn-trigger btn-icon dropdown-toggle me-n1">
-                    <Icon name="more-h"></Icon>
-                  </DropdownToggle>
-                  <DropdownMenu end>
-                    <ul className="link-list-opt no-bdr">
-                      <li onClick={() => selectorCompleteProject()}>
-                        <DropdownItem
-                          tag="a"
-                          href="#markasdone"
-                          onClick={(ev) => {
-                            ev.preventDefault();
-                          }}
-                        >
-                          <Icon name="check-round-cut"></Icon>
-                          <span>Mark As Done</span>
-                        </DropdownItem>
-                      </li>
-                      <li onClick={() => selectorDeleteProject()}>
-                        <DropdownItem
-                          tag="a"
-                          href="#remove"
-                          onClick={(ev) => {
-                            ev.preventDefault();
-                          }}
-                        >
-                          <Icon name="trash"></Icon>
-                          <span>Remove Projects</span>
-                        </DropdownItem>
-                      </li>
-                    </ul>
-                  </DropdownMenu>
-                </UncontrolledDropdown>
-              </DataTableRow> */}
+              </DataTableRow>         
             </DataTableHead>
             {currentItems.length > 0
               ? currentItems.map((item) => {
                 var days = setDeadlineDays(item.deadline);
                 return (
                   <DataTableItem key={item.id}>
-                    {/* <DataTableRow className="nk-tb-col-check">
-                        <div className="custom-control custom-control-sm custom-checkbox notext">
-                          <input
-                            type="checkbox"
-                            className="custom-control-input"
-                            defaultChecked={item.checked}
-                            id={item.id + "pid-all"}
-                            key={Math.random()}
-                            onChange={(e) => onSelectChange(e, item.id)}
-                          />
-                          <label className="custom-control-label" htmlFor={item.id + "pid-all"}></label>
-                        </div>
-                      </DataTableRow> */}
                     <DataTableRow>
                       <a
                         href="#title"
@@ -380,34 +494,20 @@ export const ProjectListPage = () => {
                       >
                         {/* <UserAvatar className="sq" theme={item.avatarClass} text={findUpper(item.title)} /> */}
                         <div className="project-info">
-                          <h6 className="title">{item.title}</h6>
+                          <h6 className="title">{item.subscriptionPlan}</h6>
                         </div>
                       </a>
                     </DataTableRow>
-                    {/* <DataTableRow size="xxl">
-                        <span>{new Date().toLocaleString()}</span>
-                      </DataTableRow> */}
                     <DataTableRow size="lg">
-                      <span>{new Date(Date.now()).toLocaleString()}</span>
+                      <span>{item.subscriptionDate}</span>
                     </DataTableRow>
                     <DataTableRow size="lg">
-                      <span style={{ margin: "auto", marginLeft: "20px" }}>{item.id}</span>
+                      <span style={{ margin: "auto", marginLeft: "20px" }}>{item.quantity}</span>
                     </DataTableRow>
                     <DataTableRow size="xxl">
                       <span>{days === 0 ? "Closed" : "Open"}</span>
                     </DataTableRow>
-                    {/* <DataTableRow size="md">
-                        <div className="project-list-progress">
-                          <Progress
-                            className="progress-pill progress-md bg-light"
-                            value={days === 0 ? 100 : calcPercentage(item.totalTask, item.tasks)}
-                          ></Progress>
-                          <div className="project-progress-percent">
-                            {days === 0 ? 100 : calcPercentage(item.totalTask, item.tasks)}%
-                          </div>
-                        </div>
-                      </DataTableRow> */}
-                    <DataTableRow size="mb">
+                    {/* <DataTableRow size="mb">
 
                       <Badge
                         className="badge-dim"
@@ -424,60 +524,21 @@ export const ProjectListPage = () => {
                         <Icon name="clock"></Icon>
                         <span>{days <= 0 ? "Done" : days === 1 ? "Due Tomorrow" : days + " Days Left"}</span>
                       </Badge>
-                    </DataTableRow>
+                    </DataTableRow> */}
                     <DataTableRow size="md">
                       <div className="project-list-progress">
-                        {/* <Progress
-                            className="progress-pill progress-md bg-light"
-                            value={days === 0 ? 100 : calcPercentage(item.totalTask, item.tasks)}
-                          ></Progress>
-                          <div className="project-progress-percent">
-                            {days === 0 ? 100 : calcPercentage(item.totalTask, item.tasks)}%
-                          </div> */}
-                        <Button onClick={()=>{alert("Comming Soon ...")}} className="sub-text" style={{ backgroundColor: "rgb(199,205,215)", color:"black" }}>Download</Button>
+                        <Button onClick={() => handleViewPromoCodes(item.promoCodes, item.subscriptionPlan)} className="sub-text" style={{ color: "rgb(112,127,154)", }} onMouseOver={(e) => {
+                          e.target.style.color = 'black';
+                          e.target.style.fontWeight = 'bolder';
+                        }}
+                          onMouseOut={(e) => {
+                            e.target.style.color = 'rgb(112,127,154)';
+                            e.target.style.fontWeight = 'normal';
+                          }}
+                        >View</Button>
                       </div>
                     </DataTableRow>
-                    {/* <DataTableRow className="nk-tb-col-tools text-end">
-                        <ul className="nk-tb-actions gx-1">
-                          <li>
-                            <UncontrolledDropdown>
-                              <DropdownToggle tag="a" className="text-soft dropdown-toggle btn btn-icon btn-trigger">
-                                <Icon name="more-h"></Icon>
-                              </DropdownToggle>
-                              <DropdownMenu end>
-                                <ul className="link-list-opt no-bdr">
-                                  <li onClick={() => onEditClick(item.id)}>
-                                    <DropdownItem
-                                      tag="a"
-                                      href="#edit"
-                                      onClick={(ev) => {
-                                        ev.preventDefault();
-                                      }}
-                                    >
-                                      <Icon name="edit"></Icon>
-                                      <span>Edit</span>
-                                    </DropdownItem>
-                                  </li>
-                                  {days !== 0 && (
-                                    <li onClick={() => completeProject(item.id)}>
-                                      <DropdownItem
-                                        tag="a"
-                                        href="#markasdone"
-                                        onClick={(ev) => {
-                                          ev.preventDefault();
-                                        }}
-                                      >
-                                        <Icon name="check-round-cut"></Icon>
-                                        <span>Mark As Done</span>
-                                      </DropdownItem>
-                                    </li>
-                                  )}
-                                </ul>
-                              </DropdownMenu>
-                            </UncontrolledDropdown>
-                          </li>
-                        </ul>
-                      </DataTableRow> */}
+
                   </DataTableItem>
                 );
               })
@@ -515,62 +576,15 @@ export const ProjectListPage = () => {
               <h5 className="title">Add Subscriptions</h5>
               <div className="mt-4">
                 <Form className="row gy-4" onSubmit={handleSubmit(onFormSubmit)}>
-                  {/* <Col md="6">
-                    <div className="form-group">
-                      <label className="form-label">Title</label>
-                      <input
-                        type="text"
-                        name="title"
-                        defaultValue={formData.title}
-                        placeholder="Enter Title"
-                        onChange={(e) => onInputChange(e)}
-                        className="form-control"
-                        ref={register({
-                          required: "This field is required",
-                        })}
-                      />
-                      {errors.title && <span className="invalid">{errors.title.message}</span>}
-                    </div>
-                  </Col> */}
-                  {/* <Col md="6">
-                    <div className="form-group">
-                      <label className="form-label">Client</label>
-                      <input
-                        type="text"
-                        name="subtitle"
-                        defaultValue={formData.subtitle}
-                        placeholder="Enter client name"
-                        onChange={(e) => onInputChange(e)}
-                        className="form-control"
-                        ref={register({
-                          required: "This field is required",
-                        })}
-                      />
-                      {errors.subtitle && <span className="invalid">{errors.subtitle.message}</span>}
-                    </div>
-                  </Col> */}
-                  {/* <Col size="12">
-                    <div className="form-group">
-                      <label className="form-label">Description</label>
-                      <textarea
-                        name="description"
-                        defaultValue={formData.description}
-                        placeholder="Your description"
-                        onChange={(e) => onInputChange(e)}
-                        className="form-control-xl form-control no-resize"
-                        ref={register({
-                          required: "This field is required",
-                        })}
-                      />
-                      {errors.description && <span className="invalid">{errors.description.message}</span>}
-                    </div>
-                  </Col> */}
                   <Col md="6">
                     <div className="form-group">
                       <label className="form-label">Subscriptions</label>
-                      <div className="form-control-wrap">
-                        <RSelect options={teamList} isMulti onChange={(e) => setFormData({ ...formData, team: e })} />
-                      </div>
+                      <select required id="subscriptionPlan" className="form-select" value={subscriptionPlan} onChange={handleSubscriptionPlanPriceChange}>
+                        <option value=""></option>
+                        <option value='1 month'>1 month</option>
+                        <option value='2 months'>2 months</option>
+                        <option value='3 months'>3 months</option>
+                      </select>
                     </div>
                   </Col>
                   <Col md="6">
@@ -578,13 +592,14 @@ export const ProjectListPage = () => {
                       <label className="form-label">Quantity</label>
                       <input
                         type="number"
-                        name="totalTask"
-                        defaultValue={formData.totalTask}
-                        onChange={(e) => onInputChange(e)}
+                        id="quantity"
                         className="form-control"
+                        value={quantity}
+                        onChange={handleQuantityPriceChange}
                         ref={register({
                           required: "This field is required",
                         })}
+                        required
                       />
                       {errors.totalTask && <span className="invalid">{errors.totalTask.message}</span>}
                     </div>
@@ -592,51 +607,20 @@ export const ProjectListPage = () => {
                   <Col md="6">
                     <div className="form-group">
                       <label className="form-label">Subscription Start Date</label>
-                      <DatePicker
-                        selected={formData.purchasedDate}
-                        className="form-control"
-                        onChange={(purchasedDate) => setFormData({ ...formData, purchasedDate: purchasedDate })}
-                        minDate={new Date()}
-                      />
+                      <input type="date" id="subscriptionDate" className="form-control" value={subscriptionDate} disabled />
                     </div>
                   </Col>
-                  <Col md="6"> 
+                  <Col md="6">
+
                     <div className="form-group">
-                      <label className="form-label"> Subscription End Date</label>
-                      <DatePicker
-                        selected={formData.endDate}
-                        className="form-control"
-                        onChange={(daendDatete) => setFormData({ ...formData, endDate: endDate  })}
-                        minDate={new Date()}
-                      />
+                      <label className="form-label">Total Amount in KWD</label>
+                      <input type="number" id="totalAmount" className="form-control" value={totalAmount} disabled />
                     </div>
                   </Col>
-                  {/* <Col md="6">
-                    <div className="form-group">
-                      <label className="form-label">Lead</label>
-                      <RSelect options={formData.team} onChange={(e) => setFormData({ ...formData, lead: e.value })} />
-                    </div>
-                  </Col> */}
-                  {/* <Col md="6">
-                    <div className="form-group">
-                      <label className="form-label">Number of Tasks</label>
-                      <input
-                        type="number"
-                        name="tasks"
-                        defaultValue={formData.tasks}
-                        onChange={(e) => onInputChange(e)}
-                        className="form-control"
-                        ref={register({
-                          required: "This field is required",
-                        })}
-                      />
-                      {errors.tasks && <span className="invalid">{errors.tasks.message}</span>}
-                    </div>
-                  </Col> */}
                   <Col size="12">
                     <ul className="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
                       <li>
-                        <Button color="primary" size="md" type="submit">
+                        <Button onClick={handlePurchase} color="primary" size="md" type="submit">
                           Purchase
                         </Button>
                       </li>
@@ -659,8 +643,8 @@ export const ProjectListPage = () => {
           </ModalBody>
         </Modal>
 
-        {/* <Modal isOpen={modal.edit} toggle={() => setModal({ edit: false })} className="modal-dialog-centered" size="lg">
-          <ModalBody>
+        <Modal isOpen={modal.edit} toggle={() => setModal({ edit: false })} className="modal-dialog-centered" size="lg">
+          <ModalBody >
             <a
               href="#cancel"
               onClick={(ev) => {
@@ -672,155 +656,46 @@ export const ProjectListPage = () => {
               <Icon name="cross-sm"></Icon>
             </a>
             <div className="p-2">
-              <h5 className="title">Update Subscriptions</h5>
-              <div className="mt-4">
-                <Form className="row gy-4" onSubmit={handleSubmit(onEditSubmit)}>
-                  <Col md="6">
-                    <div className="form-group">
-                      <label className="form-label">Title</label>
-                      <input
-                        type="text"
-                        name="title"
-                        defaultValue={formData.title}
-                        placeholder="Enter Title"
-                        onChange={(e) => onInputChange(e)}
-                        ref={register({
-                          required: "This field is required",
-                        })}
-                        className="form-control"
-                      />
-                      {errors.title && <span className="invalid">{errors.title.message}</span>}
-                    </div>
-                  </Col>
-                  <Col md="6">
-                    <div className="form-group">
-                      <label className="form-label">Client</label>
-                      <input
-                        type="text"
-                        name="subtitle"
-                        defaultValue={formData.subtitle}
-                        placeholder="Enter client Name"
-                        onChange={(e) => onInputChange(e)}
-                        ref={register({
-                          required: "This field is required",
-                        })}
-                        className="form-control"
-                      />
-                      {errors.subtitle && <span className="invalid">{errors.subtitle.message}</span>}
-                    </div>
-                  </Col>
-                  <Col size="12">
-                    <div className="form-group">
-                      <label className="form-label">Description</label>
-                      <textarea
-                        name="description"
-                        defaultValue={formData.description}
-                        placeholder="Your description"
-                        onChange={(e) => onInputChange(e)}
-                        ref={register({
-                          required: "This field is required",
-                        })}
-                        className="form-control no-resize"
-                      />
-                      {errors.description && <span className="invalid">{errors.description.message}</span>}
-                    </div>
-                  </Col>
-                  <Col md="6">
-                    <div className="form-group">
-                      <label className="form-label">Team Members</label>
-                      <RSelect
-                        options={teamList}
-                        isMulti
-                        defaultValue={formData.team}
-                        onChange={(e) => setFormData({ ...formData, team: e })}
-                        required
-                      />
-                    </div>
-                  </Col>
-                  <Col md="6">
-                    <div className="form-group">
-                      <label className="form-label">Number of Tasks</label>
-                      <input
-                        type="number"
-                        name="tasks"
-                        onChange={(e) => onInputChange(e)}
-                        ref={register({
-                          required: "This field is required",
-                        })}
-                        defaultValue={formData.tasks}
-                        className="form-control"
-                      />
-                      {errors.tasks && <span className="invalid">{errors.tasks.message}</span>}
-                    </div>
-                  </Col>
-                  <Col md="6">
-                    <div className="form-group">
-                      <label className="form-label">Total Tasks</label>
-                      <input
-                      required
-                        type="number"
-                        name="totalTask"
-                        min={formData.totalTask}
-                        defaultValue={formData.totalTask}
-                        onChange={(e) => onInputChange(e)}
-                        ref={register({
-                          required: "This field is required",
-                        })}
-                        className="form-control"
-                      />
-                      {errors.totalTask && <span className="invalid">{errors.totalTask.message}</span>}
-                    </div>
-                  </Col>
-                  <Col md="6">
-                    <div className="form-group">
-                      <label className="form-label">Date</label>
-                      <DatePicker
-                        selected={formData.date}
-                        className="form-control"
-                        onChange={(date) => setFormData({ ...formData, date: date })}
-                        minDate={new Date()}
-                      />
-                      {errors.date && <span className="invalid">{errors.date.message}</span>}
-                    </div>
-                  </Col>
-                  
-                  <Col md="6">
-                    <div className="form-group">
-                      <label className="form-label">Lead</label>
-                      <RSelect
-                        options={formData.team}
-                        defaultValue={[{ value: formData.lead, label: formData.lead }]}
-                        onChange={(e) => setFormData({ ...formData, lead: e.value })}
-                      />
-                    </div>
-                  </Col>
-                  <Col size="12">
-                    <ul className="align-center flex-wrap flex-sm-nowrap gx-4 gy-2">
-                      <li>
-                        <Button color="primary" size="md" type="submit">
-                          Update Subscriptions
-                        </Button>
-                      </li>
-                      <li>
-                        <Button
-                          onClick={(ev) => {
-                            ev.preventDefault();
-                            onFormCancel();
-                          }}
-                          className="link link-light"
-                        >
-                          Cancel
-                        </Button>
-                      </li>
-                    </ul>
-                  </Col>
-                </Form>
+              <h5 className="title" style={{ position: "sticky", top: "10" }}>Promo codes</h5>
+              <div className="mt-4" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+
+                <Table striped bordered responsive >
+                  <thead>
+                    <tr>
+                      <th>Codes</th>
+                      <th>Plan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {itemList.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item}</td>
+                        <td>{subscriptionPlan1}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+                {/* {itemList.map((item, index) => (
+                  <EntityTable key={index} data={item} />
+                ))} */}
+
               </div>
             </div>
           </ModalBody>
-        </Modal> */}
+          <div style={{ width: "90%", margin: "auto", paddingTop: "20px", paddingBottom: "20px" }}>
+            <Button color="primary" size="md" variant="primary" onClick={handleDownload}>
+              Download
+            </Button>
+            <Button style={{}} variant="secondary" onClick={handleCloseModal}>
+              Close
+            </Button>
+          </div>
+        </Modal>
+
+
+
       </Content>
-    </React.Fragment>
+    </React.Fragment >
   );
 };
 

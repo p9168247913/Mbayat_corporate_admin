@@ -8,7 +8,7 @@ const menu = [
     link: "/",
   },
   {
-    heading: "Pre-built Pages",
+    heading: "MANAGEMENTS",
   },
   {
     icon: "gift",
@@ -21,7 +21,7 @@ const menu = [
       // },
       {
         text: "Subscriptions",
-        link: "/project-list",
+        link: "/subscriptions",
       },
     ],
   },

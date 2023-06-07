@@ -11,12 +11,6 @@ if (process.env.NODE_ENV === "development") {
   } else url = process.env.PUBLIC_URL; /// ADD YOUR CPANEL SUB-URL
 }
 
-
-
-
-
-
-
 //Function to validate and return errors for a form
 export const checkForm = (formData) => {
   let errorState = {};
@@ -54,10 +48,10 @@ export const setDeadline = (days) => {
 
 // Function to set deadline for projects
 export const setDeadlineDays = (deadline) => {
-  var currentDate = new Date();
-  var difference = deadline.getTime() - currentDate.getTime();
-  var days = Math.ceil(difference / (1000 * 3600 * 24));
-  return days;
+  // var currentDate = new Date();
+  // var difference = deadline.getTime() - currentDate.getTime();
+  // var days = Math.ceil(difference / (1000 * 3600 * 24));
+  // return days;
 };
 
 //Date formatter function
