@@ -11,9 +11,6 @@ import { DropdownToggle, DropdownMenu, UncontrolledDropdown, DropdownItem, Conta
 import { projectData } from "./pre-built/projects/ProjectData";
 // import "./myHomePage.css"
 import { FaCaretDown } from "react-icons/fa";
-
-
-
 import {
   Block,
   BlockHead,
@@ -33,7 +30,6 @@ import {
 } from "../components/partials/charts/default/DefaultCharts";
 import { useEffect } from "react";
 
-
 const Homepage = () => {
   const [sm, updateSm] = useState(false);
   const [list, setLists] = useState([])
@@ -41,7 +37,6 @@ const Homepage = () => {
     try {
       const response = await fetch('http://15.185.57.60:3000/v1/interest/interest-lists?fetchType=all');
       const jsonData = await response.json();
-      // console.log("fetched list",jsonData.results)
       setLists(jsonData.results)
 
     } catch (error) {
@@ -52,20 +47,15 @@ const Homepage = () => {
   useEffect(() => {
     fetchVendorData();
   }, []);
-  // const [selectedValue, setSelectedValue] = useState('');
 
   const handleSelectChange = (event) => {
     const value = event.target.value;
-    // setSelectedValue(value);
     console.log(value);
   };
 
   // new code :-
 
   const [data, setData] = useState(projectData)
-
-  // console.log("data", data)
-
 
   const containerStyle = {
     margin: "auto",
@@ -80,10 +70,7 @@ const Homepage = () => {
 
   const mediaQueryStyle = {
     '@media (maxWidth: 768px)': {
-      gridTemplateColumns: "repeat(2, 1fr)", // Modify the columns for smaller screens
-      // backgroundColor: 'lightblue', // Change the background color for smaller screens
-
-      // padding: '5px', // Modify the padding for smaller screens
+      gridTemplateColumns: "repeat(2, 1fr)", 
     },
   };
 
