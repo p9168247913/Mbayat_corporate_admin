@@ -129,7 +129,7 @@ const Pages = () => {
         <Route exact path={`${process.env.PUBLIC_URL}/ecommerce/support`} component={EcomSupport}></Route>
         <Route
           exact
-          path={`${process.env.PUBLIC_URL}/ecommerce/customer`}
+          path={`${process.env.PUBLIC_URL}/ecommerce/products`}
           render={() => (
             <CustomerProvider>
               <EcomCustomer />

@@ -18,6 +18,8 @@ import Register from "./pages/auth/Register";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import Success from "./pages/auth/Success";
 import InvoicePrint from "./pages/pre-built/invoice/InvoicePrint";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = (props) => {
   useEffect(() => {
@@ -34,6 +36,7 @@ const App = (props) => {
     };
   }, []);
   return (
+    <>
     <Switch>
       {/* Auth Pages */}
       <Route exact path={`${process.env.PUBLIC_URL}/auth-success`} component={Success}></Route>
@@ -59,7 +62,10 @@ const App = (props) => {
       {/*Main Routes*/}
       <PrivateRoute exact path="" component={Layout}></PrivateRoute>
       <Route component={RedirectAs404}></Route>
+      
     </Switch>
+    <ToastContainer position="bottom-center" />
+    </>
   );
 };
 export default withRouter(App);

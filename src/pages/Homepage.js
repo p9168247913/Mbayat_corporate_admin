@@ -9,7 +9,6 @@ import TopProducts from "../components/partials/default/top-products/TopProducts
 import DataCard from "../components/partials/default/DataCard";
 import { DropdownToggle, DropdownMenu, UncontrolledDropdown, DropdownItem, Container } from "reactstrap";
 import { projectData } from "./pre-built/projects/ProjectData";
-// import "./myHomePage.css"
 import { FaCaretDown } from "react-icons/fa";
 import {
   Block,
@@ -29,6 +28,7 @@ import {
   DefaultVisitorChart,
 } from "../components/partials/charts/default/DefaultCharts";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Homepage = () => {
   const [sm, updateSm] = useState(false);
@@ -38,7 +38,6 @@ const Homepage = () => {
       const response = await fetch('http://15.185.57.60:3000/v1/interest/interest-lists?fetchType=all');
       const jsonData = await response.json();
       setLists(jsonData.results)
-
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -80,7 +79,6 @@ const Homepage = () => {
     console.log("option", option.name)
     setSelectedOption(option);
   };
-
 
   return (
     <React.Fragment>
@@ -152,10 +150,7 @@ const Homepage = () => {
                       </UncontrolledDropdown> */}
                     </li>
                     <li className="nk-block-tools-opt">
-                      {/* <Button color="primary">
-                        <Icon name="reports" />
-                        <span>Reports</span>
-                      </Button> */}
+                      
                     </li>
                   </ul>
                 </div>
@@ -165,7 +160,7 @@ const Homepage = () => {
         </BlockHead>
         <Block>
           <Row className="g-gs">
-            <Col xxl="2" sm="4"  >
+            <Col xxl="4" sm="8"  >
               <DataCard style={{ border:"1px solid red"}}
                 title="Mystery Box Order"
                 // percentChange={"4.63"}
@@ -174,7 +169,7 @@ const Homepage = () => {
                 amount={"1975"}
               />
             </Col>
-            <Col xxl="2" sm="4">
+            <Col xxl="4" sm="8">
               <DataCard
                 title="Subscriptions"
                 // percentChange={"2.63"}
@@ -183,7 +178,7 @@ const Homepage = () => {
                 amount={`${2284} KWD`}
               />
             </Col>
-            <Col xxl="2" sm="4">
+            <Col xxl="4" sm="8">
               <DataCard
                 title="Orders"
                 // percentChange={"4.63"}
@@ -230,10 +225,10 @@ const Homepage = () => {
             display: "flex",
             justifyContent: "space-between",
             position: 'sticky',
-            top: "65px",
+            top: "64px",
             backgroundColor: "white",
             alignItems: "center",         
-            zIndex: "9999",
+            zIndex: "2",
             paddingRight:"150px",
             paddingLeft:'30px'
           }}>
@@ -308,13 +303,14 @@ const Homepage = () => {
                           border: 'none',
                           outline: 'none',
                           marginTop: '40px',
-                          color: 'rgb(64, 15, 59)'
+                          color: 'rgb(64, 15, 59)',
+                          zIndex:"1"
                         }}
-                        onClick={() => {
-                          alert('View this Interest');
+                        onClick={() => { 
+                          
                         }}
                       >
-                        View
+                        <Link to="/ecommerce/products">Visit store</Link>
                       </Button>
                     </div>
                   </Col>

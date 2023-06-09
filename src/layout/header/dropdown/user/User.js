@@ -10,11 +10,17 @@ const User = () => {
 
   const handleSignout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("CompanyName");
+    localStorage.removeItem("Email");
+    localStorage.removeItem("userId");
   };
 
+  const CompanyName = localStorage.getItem('CompanyName')
+  const Email = localStorage.getItem("Email")
+
   return (
-    <Dropdown isOpen={open} className="user-dropdown" toggle={toggle}>
-      <DropdownToggle
+    <Dropdown style={{zIndex:"9999"}} isOpen={open} className="user-dropdown" toggle={toggle}>
+      <DropdownToggle 
         tag="a"
         href="#toggle"
         className="dropdown-toggle"
@@ -26,19 +32,19 @@ const User = () => {
           <UserAvatar icon="user-alt" className="sm" />
           <div className="user-info d-none d-md-block">
             <div className="user-status">Administrator</div>
-            <div className="user-name dropdown-indicator">Abu Bin Ishityak</div>
+            <div className="user-name dropdown-indicator">{CompanyName}</div>
           </div>
         </div>
       </DropdownToggle>
-      <DropdownMenu end className="dropdown-menu-md dropdown-menu-s1">
+      <DropdownMenu end className="dropdown-menu-md dropdown-menu-s1" style={{zIndex:"inherit"}}>
         <div className="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
           <div className="user-card sm">
             <div className="user-avatar">
               <span>AB</span>
             </div>
             <div className="user-info">
-              <span className="lead-text">Abu Bin Ishtiyak</span>
-              <span className="sub-text">info@softnio.com</span>
+              <span className="lead-text">{CompanyName}</span>
+              <span className="sub-text">{Email}</span>
             </div>
           </div>
         </div>

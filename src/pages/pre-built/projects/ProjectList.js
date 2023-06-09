@@ -231,7 +231,15 @@ export const ProjectListPage = () => {
   // Get current list, pagination
   const indexOfLastItem = currentPage * itemPerPage;
   const indexOfFirstItem = indexOfLastItem - itemPerPage;
-  const currentItems = subscriptionData.slice(indexOfFirstItem, indexOfLastItem);
+  let currentItems = [];
+
+  if (Array.isArray(subscriptionData)) {
+    currentItems = subscriptionData.slice(indexOfFirstItem, indexOfLastItem);
+  }
+
+  if (Array.isArray(subscriptionData)) {
+    currentItems = subscriptionData.slice(indexOfFirstItem, indexOfLastItem);
+  }
 
   // Change Page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -279,6 +287,7 @@ export const ProjectListPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [subscriptionDate, setSubscriptionDate] = useState('');
   const [totalAmount, setTotalAmount] = useState(0);
+  const [paymentUrl, setPaymentUrl] = useState('');
 
   useEffect(() => {
     const currentDate = new Date().toISOString().slice(0, 10);
@@ -331,9 +340,7 @@ export const ProjectListPage = () => {
   };
 
   const handlePurchase = async () => {
-
     try {
-
       const response = await fetch('http://localhost:5500/subscriptions', {
         method: 'POST',
         headers: {
@@ -347,9 +354,88 @@ export const ProjectListPage = () => {
         }),
       });
 
-      if (response.status) {
-        console.log(response.body)
+      // console.log(response)
+      if (response.ok) {
+        const res = await response.json()        
+        console.log("res",res)
+
+        // const userID=localStorage.getItem("userId")
+        // const paymentResponse = await fetch('http://localhost:5500/paymentgateway', {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     "Authorization":"Y2ZmNWM5OTIxYjhiOTY3OWI1OGNhNGE4OTY3MjE2ZTQyNTYyYjY2ZQ=="
+        //   },
+        //   body: JSON.stringify({
+        //     trackid: new Date().getTime(),
+        //     amount: quantity,
+        //     currency: totalAmount,
+        //     payment_type: 1,
+        //     success_url: `http://15.185.57.60:3000/v1/payment/paymentSuccess?userId=${userID}&amount=${totalAmount}`,
+        //     error_url: `http://15.185.57.60:3000/v1/payment/paymentError?userId=${userID}&amount=${totalAmount}`,
+        //     language: 'ENG',
+        //   }),
+        // });
+
+        // const payres =  JSON.parse(paymentResponse)
+        // console.log("payres",payres)
+
+        // if (payres.status) {
+        //   if (payres.status === true) {
+        //     const paymentData = payres.data;
+        //     const { PaymentUrl, PaymentID } = paymentData;
+        //     const paymentUrl = `${PaymentUrl}?PaymentID=${PaymentID}`;
+  
+        //     setPaymentUrl(paymentUrl);
+        //     const paymentWindow = window.open(paymentUrl, '_blank');
+        //     window.addEventListener('message', (event) => {
+        //       if (event.origin === 'https://development.payzah.net') {
+        //         const { status } = event.data;
+        //         if (status === true) {
+        //           paymentWindow.close();
+        //           // Make a post request for subscription only if payment is successful
+        //           fetch('http://localhost:5500/subscriptions', {
+        //             method: 'POST',
+        //             headers: {
+        //               'Content-Type': 'application/json',
+        //             },
+        //             body: JSON.stringify({
+        //               subscriptionPlan,
+        //               quantity,
+        //               totalAmount,
+        //             }),
+        //           })
+        //             .then((response) => {
+        //               if (response.ok) {
+        //                 return response.json();
+        //               } else {
+        //                 throw new Error('Subscription creation failed');
+        //               }
+        //             })
+        //             .then((data) => {
+        //               console.log('Subscription created:', data);
+        //               // Perform any necessary actions after successful subscription
+        //               // e.g., show success message, update UI, etc.
+        //             })
+        //             .catch((error) => {
+        //               console.error('Subscription creation failed:', error);
+        //               // Handle error condition
+        //             });
+        //         } else {
+        //           // Handle payment failure condition
+        //           console.error('Payment failed:', event.data);
+        //         }
+        //       }
+        //     });
+        //   } else {
+        //     console.error('Payment failed:', payres.message);
+        //   }
+        // } else {
+        //   console.error('Failed to fetch payment gateway URL');
+        // }
+
         fetchSubscriptionData();
+        
         // Handle successful response, e.g., show a success message
         showAlert('Success', 'Subscription purchased successfully!', 'success');
       } else {
@@ -477,7 +563,7 @@ export const ProjectListPage = () => {
               </DataTableRow>
               <DataTableRow size="md">
                 <span className="sub-text" style={{ fontWeight: "bold" }}>Action</span>
-              </DataTableRow>         
+              </DataTableRow>
             </DataTableHead>
             {currentItems.length > 0
               ? currentItems.map((item) => {
@@ -581,9 +667,9 @@ export const ProjectListPage = () => {
                       <label className="form-label">Subscriptions</label>
                       <select required id="subscriptionPlan" className="form-select" value={subscriptionPlan} onChange={handleSubscriptionPlanPriceChange}>
                         <option value=""></option>
-                        <option value='1 month'>1 month</option>
-                        <option value='2 months'>2 months</option>
-                        <option value='3 months'>3 months</option>
+                        <option value='1 month'>1 month&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 15KWD</option>
+                        <option value='2 months'>2 months&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 30KWD</option>
+                        <option value='3 months'>3 months&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 45KWD</option>
                       </select>
                     </div>
                   </Col>
@@ -593,6 +679,7 @@ export const ProjectListPage = () => {
                       <input
                         type="number"
                         id="quantity"
+                        name="quantity"
                         className="form-control"
                         value={quantity}
                         onChange={handleQuantityPriceChange}
