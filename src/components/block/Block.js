@@ -29,7 +29,18 @@ export const BlockHead = ({ className, size, wide, ...props }) => {
     [`wide-${wide}`]: wide,
     [`${className}`]: className,
   });
-  return <div className={blockHeadClass}>{props.children}</div>;
+  return <div style={{
+    // border: "1px solid red",
+    padding: "20px",
+    backgroundColor: "white",
+    position: 'sticky',
+    top: "64px",
+    marginTop: "-33px",
+    width: 'calc(100% + 70px)',
+    marginLeft: "-35px",
+    marginBottom:"20px",
+    zIndex:1
+  }} className={blockHeadClass} >{props.children}</div>;
 };
 export const BlockHeadContent = ({ className, ...props }) => {
   return <div className={[`nk-block-head-content${className ? " " + className : ""}`]}>{props.children}</div>;

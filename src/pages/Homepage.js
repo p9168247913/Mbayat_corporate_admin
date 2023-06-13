@@ -10,6 +10,7 @@ import DataCard from "../components/partials/default/DataCard";
 import { DropdownToggle, DropdownMenu, UncontrolledDropdown, DropdownItem, Container } from "reactstrap";
 import { projectData } from "./pre-built/projects/ProjectData";
 import { FaCaretDown } from "react-icons/fa";
+import { useHistory } from 'react-router-dom';
 import {
   Block,
   BlockHead,
@@ -35,7 +36,7 @@ const Homepage = () => {
   const [list, setLists] = useState([])
   const fetchVendorData = async () => {
     try {
-      const response = await fetch('http://15.185.57.60:3000/v1/interest/interest-lists?fetchType=all');
+      const response = await fetch('https://15.185.57.60/api/v1/interest/interest-lists?fetchType=all');
       const jsonData = await response.json();
       setLists(jsonData.results)
     } catch (error) {
@@ -56,29 +57,14 @@ const Homepage = () => {
 
   const [data, setData] = useState(projectData)
 
-  const containerStyle = {
-    margin: "auto",
-    display: 'grid',
-    gridTemplateColumns: "repeat(4, 1fr)",
-    marginTop: "30px",
-    padding: "25px 0px",
-    alignItems: "center",
-    width: "100%",
-    gap: '20px',
-  };
-
-  const mediaQueryStyle = {
-    '@media (maxWidth: 768px)': {
-      gridTemplateColumns: "repeat(2, 1fr)", 
-    },
-  };
-
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleOptionSelect = (option) => {
     console.log("option", option.name)
     setSelectedOption(option);
   };
+
+  const history = useHistory()
 
   return (
     <React.Fragment>
@@ -150,7 +136,7 @@ const Homepage = () => {
                       </UncontrolledDropdown> */}
                     </li>
                     <li className="nk-block-tools-opt">
-                      
+
                     </li>
                   </ul>
                 </div>
@@ -161,7 +147,7 @@ const Homepage = () => {
         <Block>
           <Row className="g-gs">
             <Col xxl="4" sm="8"  >
-              <DataCard style={{ border:"1px solid red"}}
+              <DataCard 
                 title="Mystery Box Order"
                 // percentChange={"4.63"}
                 up={true}
@@ -169,8 +155,9 @@ const Homepage = () => {
                 amount={"1975"}
               />
             </Col>
-            <Col xxl="4" sm="8">
-              <DataCard
+            <Col xxl="4" sm="8" >
+              <DataCard 
+              route="subscriptions"
                 title="Subscriptions"
                 // percentChange={"2.63"}
                 up={false}
@@ -181,36 +168,14 @@ const Homepage = () => {
             <Col xxl="4" sm="8">
               <DataCard
                 title="Orders"
+                route = "order-list-default"
                 // percentChange={"4.63"}
                 up={true}
                 // chart={<DefaultCustomerChart />}
                 amount={"847"}
               />
             </Col>
-            {/* <Col xxl="3" sm="6">
-              <DataCard
-                title="Today's Visitors"
-                percentChange={"2.63"}
-                up={false}
-                chart={<DefaultVisitorChart />}
-                amount={"23,485"}
-              />
-            </Col> */}
-            {/* <Col xxl="6">
-              <SalesStatistics />
-            </Col>
-            <Col xxl="3" md="6">
-              <OrderStatistics />
-            </Col>
-            <Col xxl="3" md="6">
-              <StoreStatistics />
-            </Col>
-            <Col xxl="8">
-              <RecentOrders />
-            </Col>
-            <Col xxl="4" md="8" lg="6">
-              <TopProducts />
-            </Col> */}
+
           </Row>
 
           <div style={{ border: '0.5px solid rgb(199,205,215)', marginTop: "30px", marginBottom: '30px' }}></div>
@@ -227,23 +192,23 @@ const Homepage = () => {
             position: 'sticky',
             top: "64px",
             backgroundColor: "white",
-            alignItems: "center",         
+            alignItems: "center",
             zIndex: "2",
-            paddingRight:"150px",
-            paddingLeft:'30px'
+            paddingRight: "150px",
+            paddingLeft: '30px'
           }}>
-            <BlockTitle page tag="h3" style={{marginLeft:"-200px", border:'1px solid red'}}>
+            <BlockTitle page tag="h3" style={{ marginLeft: "-200px", border: '1px solid red' }}>
               Vendors
             </BlockTitle>
-            <div style={{ width: "12%" , marginLeft:"-180px"}}>
-              <p style={{width:"100px"}}>Filter By</p>
-              <Container style={{ paddingLeft:"0px", marginTop:"-15px", width:"100%"}}>
-                <UncontrolledDropdown style={{width:"110px"}}>
+            <div style={{ width: "12%", marginLeft: "-180px" }}>
+              <p style={{ width: "100px" }}>Filter By</p>
+              <Container style={{ paddingLeft: "0px", marginTop: "-15px", width: "100%" }}>
+                <UncontrolledDropdown style={{ width: "110px" }}>
                   <DropdownToggle caret style={{ width: "110px", display: 'flex', justifyContent: "space-between" }} >
                     {selectedOption ? selectedOption.name : "Interest"}<FaCaretDown />
                   </DropdownToggle>
 
-                  <DropdownMenu onChange={handleSelectChange} style={{ maxHeight: "200px", overflow: "auto",  }}>
+                  <DropdownMenu onChange={handleSelectChange} style={{ maxHeight: "200px", overflow: "auto", }}>
 
                     <DropdownItem onClick={() => handleOptionSelect({ name: "ALL" })}>ALL</DropdownItem>
                     {
@@ -256,7 +221,7 @@ const Homepage = () => {
               </Container>
             </div>
           </div>
-            <Container fluid className="mt-4">
+          <Container fluid className="mt-4">
             <Row className="row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
               {data &&
                 data.map((item, index) => (
@@ -276,42 +241,44 @@ const Homepage = () => {
                     >
 
                       <div className="text-center">
-                      <img src="App_Icon.png" fluid className="mb-3" style={{ maxHeight: '100px' }} alt="App Icon" />
-                      <p 
-                      style={{
-                        fontWeight: 'bold',
-                        marginTop: '12px',
-                        maxHeight: '24%',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
-                      }}
-                      className="mb-2 text-center">{item.title}</p>
+                        <img src="App_Icon.png" fluid className="mb-3" style={{ maxHeight: '100px' }} alt="App Icon" />
+                        <p
+                          style={{
+                            fontWeight: 'bold',
+                            marginTop: '12px',
+                            maxHeight: '24%',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}
+                          className="mb-2 text-center">{item.title}</p>
                       </div>
-                      <Button
-                        variant="primary"
-                        className="w-75 align-self-center"
-                        style={{
-                          border: '1px solid black',
-                          width: '90%',
-                          backgroundColor: 'rgb(73, 197, 182)',
-                          margin: 'auto',
-                          display: 'block',
-                          height: '30px',
-                          borderRadius: '5px',
-                          fontWeight: 'bold',
-                          fontSize: '16px',
-                          border: 'none',
-                          outline: 'none',
-                          marginTop: '40px',
-                          color: 'rgb(64, 15, 59)',
-                          zIndex:"1"
-                        }}
-                        onClick={() => { 
-                          
-                        }}
-                      >
-                        <Link to="/ecommerce/products">Visit store</Link>
-                      </Button>
+                      <Link to="/ecommerce/products">
+                        <Button
+                          variant="primary"
+                          className="w-75 align-self-center"
+                          style={{
+                            border: '1px solid black',
+                            width: '90%',
+                            backgroundColor: 'rgb(73, 197, 182)',
+                            margin: 'auto',
+                            display: 'block',
+                            height: '40px',
+                            borderRadius: '5px',
+                            fontWeight: 'bold',
+                            fontSize: '16px',
+                            border: 'none',
+                            outline: 'none',
+                            marginTop: '40px',
+                            color: 'rgb(64, 15, 59)',
+                            zIndex: "1",
+
+                          }}
+                          onClick={() => {
+
+                          }}
+                        >
+                          Visit store
+                        </Button></Link>
                     </div>
                   </Col>
                 ))}

@@ -15,7 +15,7 @@ export const PreviewCard = ({ className, bodyClass, ...props }) => {
 
 export const PreviewAltCard = ({ className, bodyClass, ...props }) => {
   return (
-    <Card className={`${className ? className : ""}`}>
+    <Card className={`${className ? className : ""}`} style={{ marginTop:"30px"}}>
       <div className={`card-inner ${bodyClass ? bodyClass : ""}`}>{props.children}</div>
     </Card>
   );

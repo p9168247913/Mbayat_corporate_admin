@@ -310,7 +310,7 @@ const ProductList = () => {
                         }}
                       >
                         <Icon name="plus"></Icon>
-                        <span>Add Product</span>
+                        <span>Cart</span>
                       </Button>
                     </li>
                   </ul>

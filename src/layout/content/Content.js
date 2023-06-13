@@ -5,7 +5,7 @@ const Content = ({ ...props }) => {
     <div className="nk-content">
       <div className="container-fluid">
         <div className="nk-content-inner">
-          <div className="nk-content-body">
+          <div className="nk-content-body" >
             {!props.page ? props.children : null}
             {props.page === "component" ? (
               <div className="components-preview wide-md mx-auto">{props.children}</div>

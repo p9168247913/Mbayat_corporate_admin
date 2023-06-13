@@ -1,10 +1,14 @@
 import React from "react";
 import { Card } from "reactstrap";
 import { Icon } from "../../Component";
+import { useHistory } from 'react-router-dom';
 
-const DataCard = ({ title, amount, percentChange, up, chart: ChartComponent }) => {
+
+
+const DataCard = ({ title, amount, percentChange, up, chart: ChartComponent , route}) => {
+  const history = useHistory()
   return (
-    <Card style={{height:'27vh', }}>
+    <Card style={{height:'27vh', }} onClick={()=> history.push(`${process.env.PUBLIC_URL}/${route}`)}>
       <div className="nk-ecwg nk-ecwg6" style={{ width:"100%", }}>
         <div className="card-inner">
           <div className="card-title-group">

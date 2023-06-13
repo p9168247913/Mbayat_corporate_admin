@@ -27,6 +27,8 @@ import ProductH from "../../../../images/product/h.png";
 import Dropzone from "react-dropzone";
 import { Modal, ModalBody } from "reactstrap";
 import { Link } from "react-router-dom";
+import { toast } from 'react-toastify';
+
 
 const ProductList = () => {
   const [data, setData] = useState(productData);
@@ -230,7 +232,7 @@ const ProductList = () => {
   return (
     <React.Fragment>
       <Head title="Products"></Head>
-      <Content>
+      <Content >
         <BlockHead size="sm" >
           <BlockBetween >
             <BlockHeadContent>
@@ -248,7 +250,7 @@ const ProductList = () => {
                 >
                   <Icon name="more-v"></Icon>
                 </a>
-                <div className="toggle-expand-content" style={{ display: sm ? "block" : "none" }}>
+                <div className="toggle-expand-content" style={{ display: sm ? "block" : "none", zIndex: 1 }}>
                   <ul className="nk-block-tools g-3">
                     <li>
                       <div className="form-control-wrap">
@@ -265,7 +267,9 @@ const ProductList = () => {
                       </div>
                     </li>
                     <li>
-                      <UncontrolledDropdown>
+                      <UncontrolledDropdown style={{
+                        zIndex: 1
+                      }}>
                         <DropdownToggle
                           color="transparent"
                           className="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white"
@@ -294,7 +298,7 @@ const ProductList = () => {
                       </UncontrolledDropdown>
                     </li>
                     <li className="nk-block-tools-opt">
-                      <Button
+                      {/* <Button
                         className="toggle btn-icon d-md-none"
                         color="primary"
                         onClick={() => {
@@ -302,16 +306,18 @@ const ProductList = () => {
                         }}
                       >
                         <Icon name="plus"></Icon>
-                      </Button>
+                      </Button> */}
                       <Button
                         className="toggle d-none d-md-inline-flex"
                         color="primary"
-                        onClick={() => {
-                          toggle("add");
+                        style={{
+                          zIndex: 1
                         }}
+
                       >
-                        <Icon name="plus"></Icon>
-                        <span>Add Product</span>
+                        <Link to="/cart" style={{ color: "white" }}>
+                          <Icon name="cart-fill"></Icon>
+                          <span>Cart</span></Link>
                       </Button>
                     </li>
                   </ul>
@@ -322,8 +328,8 @@ const ProductList = () => {
         </BlockHead>
 
         <Block>
-        <Container fluid className="mt-4">
-            <Row className="row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+          <Container fluid className="mt-4">
+            <Row className="row-cols-1 row-cols-sm-2 row-cols-md-4 g-4" >
               {currentItems &&
                 currentItems.map((item, index) => (
                   <Col key={index} >
@@ -337,21 +343,45 @@ const ProductList = () => {
                         boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
                         borderRadius: '10px',
                         backgroundColor: 'rgb(255, 255, 255)',
-                        minHeight: '230px'
+                        minHeight: '270px'
                       }}
+                      
+                      // onMouseOver={(e) => {
+                      //   e.target.style.border = '1px solid red';
+                      //   e.target.style.transform = '1.2';
+                      //   setView({ details: true })
+                      // }}
+                      // onMouseOut={(e) => {
+                      //   e.target.style.border = 'none';
+                      //   e.target.style.transform = '1';
+                      //   setView({ details: false })
+                      // }}
+
                     >
 
-                      <div className="text-center">
-                      <img src={item.img} fluid className="mb-3" style={{ maxHeight: '100px' }} alt="App Icon" />
-                      <p 
-                      style={{
-                        fontWeight: 'bold',
-                        marginTop: '12px',
-                        maxHeight: '24%',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
-                      }}
-                      className="mb-2 text-center">{item.name}</p>
+                      <div className="text-center" style={{ height: '60%' }} onClick={(ev) => {
+                        ev.preventDefault();
+                        onEditClick(item.id);
+                        toggle("details");
+                      }}>
+                        <img src={item.img} fluid className="mb-3" style={{ height: '100%', width: "60%" }} alt="App Icon" /></div>
+
+                      <div onClick={(ev) => {
+                        ev.preventDefault();
+                        onEditClick(item.id);
+                        toggle("details");
+                      }}>
+                        <p
+                          style={{
+                            fontWeight: 'bold',
+                            marginTop: '12px',
+                            maxHeight: '34%',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            // border:"1px solid red"
+                          }}
+                          className="mb-2 text-center">{item.name}</p>
+                        <p style={{ fontWeight: "bold", }}>{`Price: ${item.price} KD`}</p>
                       </div>
                       <Button
                         variant="primary"
@@ -370,22 +400,21 @@ const ProductList = () => {
                           outline: 'none',
                           marginTop: '40px',
                           color: 'rgb(64, 15, 59)',
-                          zIndex:"1"
+
                         }}
                         onClick={(ev) => {
                           ev.preventDefault();
-                          onEditClick(item.id);
-                          toggle("details");
+                          toast.success("Added to cart")
                         }}
                       >
-                        <Link to="/ecommerce/products" style={{color:"white"}}>View</Link>
+                        Add to cart
                       </Button>
                     </div>
                   </Col>
                 ))}
             </Row>
           </Container>
-          <PreviewAltCard>
+          <PreviewAltCard >
             {data.length > 0 ? (
               <PaginationComponent
                 itemPerPage={itemPerPage}
