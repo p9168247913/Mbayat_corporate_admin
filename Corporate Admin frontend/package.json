@@ -1,6 +1,6 @@
 {
   "name": "DashliteReact-Demo2",
-  "homepage": "https://react..net/demo2/",
+  "homepage": "https://react..net/",
   "version": "1.5.0",
   "private": true,
   "dependencies": {
@@ -24,10 +24,12 @@
     "chartjs": "^0.3.24",
     "classnames": "^2.3.2",
     "export-from-json": "^1.7.0",
+    "file-saver": "^2.0.5",
     "html-react-parser": "^1.4.14",
     "nouislider-react": "^3.4.1",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.1",
+    "react-bootstrap": "^2.7.4",
     "react-chartjs-2": "^2.11.2",
     "react-copy-to-clipboard": "^5.1.0",
     "react-data-table-component": "^7.5.3",
@@ -56,7 +58,8 @@
     "slick-carousel": "^1.8.1",
     "styled-components": "^5.3.6",
     "sweetalert2": "^11.6.9",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",
