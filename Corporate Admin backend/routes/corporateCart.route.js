@@ -32,7 +32,7 @@ CorporateCartRouter.delete("/:id", async (req, res) => {
   try {
     let cart = await CorporateCartModel.findOneAndDelete({ _id:productId });
     // console.log("cartid", cart);
-    return res.status(200).send("Cart Item Deleted");
+    return res.status(201).send("Cart Item Deleted");
   } catch (err) {
     return res.status(400).send(err.message);
   }
