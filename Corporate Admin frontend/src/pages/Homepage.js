@@ -156,7 +156,7 @@ const Homepage = () => {
         </div>
         <Block>
           <Row className="g-gs">
-            <Col xxl="4" sm="8"  >
+            <Col xxl="2" sm="4"  >
               <DataCard
                 title="Mystery Box Order"
                 // percentChange={"4.63"}
@@ -165,7 +165,7 @@ const Homepage = () => {
                 amount={"1975"}
               />
             </Col>
-            <Col xxl="4" sm="8" >
+            <Col xxl="2" sm="4" >
               <DataCard
                 route="subscriptions"
                 title="Subscriptions"
@@ -175,7 +175,7 @@ const Homepage = () => {
                 amount={`${2284} KWD`}
               />
             </Col>
-            <Col xxl="4" sm="8">
+            <Col xxl="2" sm="4">
               <DataCard
                 title="Orders"
                 route="order-list-default"
@@ -192,21 +192,22 @@ const Homepage = () => {
 
           {/* filter by intrests */}
 
-          <div style={{
-            marginLeft: "-30px",
-            width: 'calc(100% + 60px)',
-            height: "90px",
-            borderRadius: "6px",
-            display: "flex",
-            justifyContent: "space-between",
-            position: 'sticky',
-            top: "64px",
-            backgroundColor: "white",
-            alignItems: "center",
-            zIndex: "2",
-            paddingRight: "150px",
-            paddingLeft: '30px'
-          }}>
+          <div
+            style={{
+              marginLeft: "-30px",
+              width: 'calc(100% + 60px)',
+              height: "90px",
+              borderRadius: "6px",
+              display: "flex",
+              justifyContent: "space-between",
+              position: 'sticky',
+              top: "64px",
+              backgroundColor: "white",
+              alignItems: "center",
+              zIndex: "2",
+              paddingRight: "150px",
+              paddingLeft: '30px'
+            }}>
             <BlockTitle page tag="h3" style={{ marginLeft: "-200px", border: '1px solid red' }}>
               Vendors
             </BlockTitle>
