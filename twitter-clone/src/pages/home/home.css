@@ -1,0 +1,77 @@
+.home__container {
+    display: flex;
+    height: 100vh;
+    max-width: 1300px;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+.search__section {
+    background-color: white;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+}
+
+.both__fedd__and__right {
+    position: absolute;
+    left: 22rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.right__section {
+    width: 25rem;
+    min-width: 250px;
+    /* overflow-y: scroll; */
+    height: 60px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 2rem;
+    /* position: relative; */
+    top: 0;
+    left: 20rem;
+    background-color: #fff !important;
+    height: 100%;
+}
+
+.followers__and__whatsHappning {
+    height: 700px;
+}
+
+
+.fixed {
+    width: 23rem;
+    position: fixed;
+    top: 3rem;
+    left: 58rem;
+    z-index: 999;
+}
+.fixed-se{
+    width: 23rem;
+    position: fixed;
+    top: 0rem;
+    left: 58rem;
+    z-index: 999;
+}
+
+
+
+@media screen and (max-width : 1024px){
+    .both__fedd__and__right {
+        position: absolute;
+        left: 8rem;
+        display: flex;
+        justify-content: space-between;
+    }
+    .fixed {
+        left: 44rem;
+    }
+    .fixed-se{
+        left: 44rem;
+    }
+}

@@ -1,0 +1,136 @@
+.tweetBox{
+    padding-bottom: 10px;
+    border-bottom: 8px solid var(--twitter-background);
+    padding-right: 10px;
+}
+.tweetBox > form{
+    display: flex;
+    flex-direction: column;
+}
+.twwetBox__input{
+    padding: 20px;
+    display: flex;
+}
+.twwetBox__input>textarea{
+    flex: 1;
+    margin-left: 20px;
+    font-size: 20px;
+    border: none;
+    outline: none;
+    resize: none;
+}
+textarea::-webkit-scrollbar{
+    display: none;
+}
+
+.tweetBox__tweetBtn{
+    background-color: #1d9bf0 !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 900 !important;
+    text-transform: inherit !important;
+    border-radius: 30px !important;
+    height: 40px !important;
+    padding: 0 30px !important;
+    cursor: pointer;
+}
+
+.tweetBox__imageInput{
+    border: 0;
+    padding: 10px;
+    outline: none;
+}
+.image-container{
+    width: 100%;
+    padding-left: 20px;
+    position: relative;
+}
+.image-container img{
+    width: 100%;
+    border-radius: 1rem;
+}
+.icons{
+    display: flex;
+    gap: 1.5rem;
+    margin-left: 15px;
+}
+.icons svg{
+    color:#1d9bf0;
+    cursor: pointer;
+    font-size: 1.3rem;
+}
+.globalIcon{
+    color:#1d9bf0;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 25px;
+    margin-bottom: .5rem;
+}
+.icons-btn-container{
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.image-container>div{
+    height: 2rem;
+    width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    background-color: rgba(15, 20, 25, 0.75);
+    position: absolute;
+    left: 1.5rem;
+    top: 5px;
+    z-index: 10;
+    border-radius: 50%;
+    transition: all 1s ease-in;
+    cursor: pointer;
+}
+.image-container>div:hover{
+    background-color: black;
+    background-color: rgba(15, 20, 25, 0.75);
+}
+
+.cancel__btn{
+    font-size: 1rem;
+    color: #fff;
+    cursor: pointer;
+    
+}
+.contain__emoji__and__pic{
+    position: relative;
+}
+
+.emojiPicker-t{
+    position: absolute;
+    top: -120px;
+    left: 11%;
+}
+.emojiPicker-f{
+    position: absolute;
+    top: 2rem;
+    left: 11%;
+    z-index: 10;
+}
+.eoji{
+    padding-left: 20px;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.tweetBox__tweet__Dis__Btn{
+    background-color: #8ecdf7 !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 900 !important;
+    text-transform: inherit !important;
+    border-radius: 30px !important;
+    height: 40px !important;
+    padding: 0 30px !important;
+    cursor: pointer;
+}
