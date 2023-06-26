@@ -3,9 +3,6 @@ import { Link } from "react-router-dom";
 import Icon from "../icon/Icon";
 import classNames from "classnames";
 
-
-
-
 export const Block = ({ className, size, ...props }) => {
   const blockClass = classNames({
     "nk-block": true,
@@ -21,6 +18,9 @@ export const BlockContent = ({ className, ...props }) => {
   });
   return <div className={blockContentClass}>{props.children}</div>;
 };
+
+
+
 
 export const BlockBetween = ({ className, ...props }) => {
   return <div className={`nk-block-between ${className ? className : ""}`}>{props.children}</div>;
@@ -41,13 +41,15 @@ export const BlockHead = ({ className, size, wide, ...props }) => {
     marginTop: "-33px",
     width: 'calc(100% + 44px)',
     marginLeft: "-22px",
-    marginBottom:"20px",
-    zIndex:2
+    marginBottom: "20px",
+    zIndex: 2
   }} className={blockHeadClass} >{props.children}</div>;
 };
+
 export const BlockHeadContent = ({ className, ...props }) => {
   return <div className={[`nk-block-head-content${className ? " " + className : ""}`]}>{props.children}</div>;
 };
+
 export const BlockTitle = ({ className, page, ...props }) => {
   const classes = [`nk-block-title ${page ? "page-title" : "title"}${className ? " " + className : ""}`];
   return (
@@ -93,7 +95,7 @@ export const BlockHeadShipping = ({ className, size, wide, ...props }) => {
     marginTop: "33px",
     width: 'calc(100% + 44px)',
     marginLeft: "-22px",
-    marginBottom:"20px",
-    zIndex:2
+    marginBottom: "20px",
+    zIndex: 2
   }} className={blockHeadClass} >{props.children}</div>;
 };
