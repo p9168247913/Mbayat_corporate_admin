@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import Head from "../layout/head/Head";
 import Content from "../layout/content/Content";
-import SalesStatistics from "../components/partials/default/SalesStatistics";
-import OrderStatistics from "../components/partials/default/OrderStatistics";
-import StoreStatistics from "../components/partials/default/StoreStatistics";
-import RecentOrders from "../components/partials/default/recent-orders/RecentOrders";
-import TopProducts from "../components/partials/default/top-products/TopProducts";
 import DataCard from "../components/partials/default/DataCard";
 import { DropdownToggle, DropdownMenu, UncontrolledDropdown, DropdownItem, Container } from "reactstrap";
 import { projectData } from "./pre-built/projects/ProjectData";
@@ -13,7 +8,6 @@ import { FaCaretDown } from "react-icons/fa";
 import { useHistory } from 'react-router-dom';
 import {
   Block,
-  BlockHead,
   BlockHeadContent,
   BlockTitle,
   Icon,
@@ -22,12 +16,6 @@ import {
   Col,
   BlockBetween,
 } from "../components/Component";
-import {
-  DefaultCustomerChart,
-  DefaultOrderChart,
-  DefaultRevenueChart,
-  DefaultVisitorChart,
-} from "../components/partials/charts/default/DefaultCharts";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -52,8 +40,6 @@ const Homepage = () => {
     const value = event.target.value;
     console.log(value);
   };
-
-  // new code :-
 
   const [data, setData] = useState(projectData)
 
@@ -97,54 +83,8 @@ const Homepage = () => {
                 </Button>
                 <div className="toggle-expand-content" style={{ display: sm ? "block" : "none" }}>
                   <ul className="nk-block-tools g-3">
-                    <li>
-                      {/* <UncontrolledDropdown>
-                        <DropdownToggle tag="a" className="dropdown-toggle btn btn-white btn-dim btn-outline-light">
-                          <Icon className="d-none d-sm-inline" name="calender-date" />
-                          <span>
-                            <span className="d-none d-md-inline">Last</span> 30 Days
-                          </span>
-                          <Icon className="dd-indc" name="chevron-right" />
-                        </DropdownToggle>
-                        <DropdownMenu end>
-                          <ul className="link-list-opt no-bdr">
-                            <li>
-                              <DropdownItem
-                                tag="a"
-                                onClick={(ev) => {
-                                  ev.preventDefault();
-                                }}
-                                href="#!"
-                              >
-                                <span>Last 30 days</span>
-                              </DropdownItem>
-                            </li>
-                            <li>
-                              <DropdownItem
-                                tag="a"
-                                onClick={(ev) => {
-                                  ev.preventDefault();
-                                }}
-                                href="#dropdownitem"
-                              >
-                                <span>Last 6 months</span>
-                              </DropdownItem>
-                            </li>
-                            <li>
-                              <DropdownItem
-                                tag="a"
-                                onClick={(ev) => {
-                                  ev.preventDefault();
-                                }}
-                                href="#dropdownitem"
-                              >
-                                <span>Last 3 weeks</span>
-                              </DropdownItem>
-                            </li>
-                          </ul>
-                        </DropdownMenu>
-                      </UncontrolledDropdown> */}
-                    </li>
+                    
+                    
                     <li className="nk-block-tools-opt">
 
                     </li>
@@ -155,9 +95,10 @@ const Homepage = () => {
           </BlockBetween>
         </div>
         <Block>
-          <Row className="g-gs">
-            <Col xxl="2" sm="4"  >
+          <Row className="g-gs" >
+            <Col xxl="3" sm="6"   >
               <DataCard
+             
                 title="Mystery Box Order"
                 // percentChange={"4.63"}
                 up={true}
@@ -165,7 +106,7 @@ const Homepage = () => {
                 amount={"1975"}
               />
             </Col>
-            <Col xxl="2" sm="4" >
+            <Col xxl="3" sm="6" >
               <DataCard
                 route="subscriptions"
                 title="Subscriptions"
@@ -175,7 +116,7 @@ const Homepage = () => {
                 amount={`${2284} KWD`}
               />
             </Col>
-            <Col xxl="2" sm="4">
+            <Col xxl="3" sm="6">
               <DataCard
                 title="Orders"
                 route="order-list-default"
@@ -214,12 +155,12 @@ const Homepage = () => {
             <div style={{ width: "12%", marginLeft: "-180px" }}>
               <p style={{ width: "100px" }}>Filter By</p>
               <Container style={{ paddingLeft: "0px", marginTop: "-15px", width: "100%" }}>
-                <UncontrolledDropdown style={{ width: "110px" }}>
-                  <DropdownToggle caret style={{ width: "110px", display: 'flex', justifyContent: "space-between" }} >
+                <UncontrolledDropdown style={{ width: "140px" }}>
+                  <DropdownToggle caret style={{ width: "140px", display: 'flex', justifyContent: "space-between" }} >
                     {selectedOption ? selectedOption.name : "Interest"}<FaCaretDown />
                   </DropdownToggle>
 
-                  <DropdownMenu onChange={handleSelectChange} style={{ maxHeight: "200px", overflow: "auto", }}>
+                  <DropdownMenu onChange={handleSelectChange} style={{ width: "140px", maxHeight: "200px", overflow: "auto", }}>
 
                     <DropdownItem onClick={() => handleOptionSelect({ name: "ALL" })}>ALL</DropdownItem>
                     {
@@ -261,7 +202,7 @@ const Homepage = () => {
                             overflow: 'hidden',
                             textOverflow: 'ellipsis'
                           }}
-                          className="mb-2 text-center">{item.title}</p>
+                          className="mb-2 text-center">{`Mbayat Vendor ${index+1}`}</p>
                       </div>
                       <Link to="/ecommerce/products">
                         <Button
