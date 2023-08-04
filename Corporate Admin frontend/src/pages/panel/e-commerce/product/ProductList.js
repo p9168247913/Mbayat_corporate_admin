@@ -228,6 +228,36 @@ const ProductList = () => {
 
   const { errors, register, handleSubmit, reset } = useForm();
 
+  const [products, setProducts] = useState([]);
+
+  const selectedVendorId = localStorage.getItem('vendorId');
+
+  const token = localStorage.getItem("accessToken")
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(`https://15.185.57.60/api/v1/product/product-by-vendor/${selectedVendorId}ad?fetchType=all`,{
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const data = await response.json();
+      // setProducts(data);
+      console.log("data pro",data)
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+
+  // Fetch the products data when the component mounts
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+
   return (
     <React.Fragment>
       <Head title="Products"></Head>
@@ -260,7 +290,7 @@ const ProductList = () => {
                           type="text"
                           className="form-control"
                           id="default-04"
-                          placeholder="Quick search by SKU"
+                          placeholder="Quick search "
                           onChange={(e) => onFilterChange(e)}
                         />
                       </div>
@@ -308,9 +338,11 @@ const ProductList = () => {
                       </Button> */}
                       <Button
                         className="toggle d-none d-md-inline-flex"
-                        color="primary"
+                        // color="primary"
                         style={{
-                          zIndex: 1
+                          zIndex: 1,
+                          backgroundColor:"#df8331"
+                          
                         }}
                       >
                         <Link to="/cart" style={{ color: "white" }}>
