@@ -9,5 +9,4 @@ const paymentGatewayProxy = createProxyMiddleware({
   },
 });
 
-
 module.exports = paymentGatewayProxy
